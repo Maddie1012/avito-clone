@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Input, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 
 interface FormStep1Props {
-  onNext: (category: string) => void;
+  onNext: (category: string, data: { name: string; description: string; location: string }) => void;
 }
 
 const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
@@ -20,7 +20,7 @@ const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
       return;
     }
     setError('');
-    onNext(selectedValue);
+    onNext(selectedValue, { name, description, location });
   };
 
   return (
