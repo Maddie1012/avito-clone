@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "4173:4173"  # Проброс порта 4173, который используется приложением
+    depends_on:
+      - backend
+
+  backend:
+    build: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
