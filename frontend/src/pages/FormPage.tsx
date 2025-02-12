@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 // import { useForm, FormProvider } from 'react-hook-form';
 import FormStep1 from '../components/FormStep1';
 import FormStep2 from '../components/FormStep2';
-// import * as Yup from 'yup';
 import { Container } from '@mui/material';
 
 
