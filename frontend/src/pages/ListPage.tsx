@@ -16,6 +16,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { Link } from 'react-router-dom';
+import placeholderImage from "../assets/Placeholder-1.png"
 
 interface Item {
   id: number;
@@ -115,14 +116,12 @@ export default function ListPage() {
         {currentItems.map((item) => (
           <Grid item key={item.id} xs={12}>
             <Card>
-              {item.image && (
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={item.image}
-                  alt={item.name}
-                />
-              )}
+              <CardMedia
+                component="img"
+                height="140"
+                image={item.image || placeholderImage}
+                alt={item.name}
+              />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {item.name}
@@ -139,7 +138,7 @@ export default function ListPage() {
               </CardContent>
               <Button
                 size="small"
-                href={`/item/${item.id}`} 
+                href={`/item/${item.id}`}
               >
                 Открыть
               </Button>

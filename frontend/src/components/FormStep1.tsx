@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Input, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 
 interface FormStep1Props {
-  onNext: (category: string, data: { name: string; description: string; location: string }) => void;
+  onNext: (category: string, data: { name: string; description: string; location: string; image?: string }) => void;
 }
 
 const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
@@ -10,6 +10,7 @@ const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [location, setLocation] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
 
   const handleChange = (event: SelectChangeEvent<string>) => setSelectedValue(event.target.value);
@@ -20,7 +21,16 @@ const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
       return;
     }
     setError('');
-    onNext(selectedValue, { name, description, location });
+
+
+    const imageBase64 = image ? URL.createObjectURL(image) : undefined;
+    onNext(selectedValue, { name, description, location, image: imageBase64 });
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setImage(event.target.files[0]);
+    }
   };
 
   return (
@@ -55,7 +65,13 @@ const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
         sx={{ marginBottom: '20px' }}
         error={!!error}
       />
-      <Input type='file' fullWidth sx={{ marginBottom: '20px' }} />
+      <Input
+        type='file'
+        fullWidth
+        sx={{ marginBottom: '20px' }}
+        onChange={handleImageChange}
+        inputProps={{ accept: 'image/*' }}
+      />
       <InputLabel>Выберите категорию</InputLabel>
       <Select
         value={selectedValue}

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface FormStep2Props {
   category: string;
-  step1Data: { name: string; description: string; location: string };
+  step1Data: { name: string; description: string; location: string; image?: string };
 }
 
 const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
@@ -68,24 +68,24 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
     };
 
     try {
-        const response = await fetch('http://localhost:3000/items', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dataToSend),
-        });
-    
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Данные успешно отправлены:', result);
-          navigate('/list');
-        } else {
-          console.error('Ошибка при отправке данных:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
+      const response = await fetch('http://localhost:3000/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Данные успешно отправлены:', result);
+        navigate('/list');
+      } else {
+        console.error('Ошибка при отправке данных:', response.statusText);
       }
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
   };
 
   return (
