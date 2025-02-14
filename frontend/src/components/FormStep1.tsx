@@ -2,14 +2,29 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Input, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 
 interface FormStep1Props {
-  onNext: (category: string, data: { name: string; description: string; location: string; image?: string }) => void;
+  onNext: (
+    category: string, 
+    data: { 
+      name: string; 
+      description: string; 
+      location: string; 
+      image?: string 
+    }
+  ) => void;
+  initialData?: {
+    name: string;
+    description: string;
+    location: string;
+    image?: string; 
+  };
+  initialCategory?: string;
 }
 
-const FormStep1: React.FC<FormStep1Props> = ({ onNext }) => {
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
+const FormStep1: React.FC<FormStep1Props> = ({ onNext, initialData, initialCategory }) => {
+  const [selectedValue, setSelectedValue] = useState<string>(initialCategory || '');
+  const [name, setName] = useState<string>(initialData?.name || '');
+  const [description, setDescription] = useState<string>(initialData?.description || '');
+  const [location, setLocation] = useState<string>(initialData?.location || '');
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
 

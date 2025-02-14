@@ -2,7 +2,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "4173:4173"  # Проброс порта 4173, который используется приложением
+      - "4173:4173"  
     depends_on:
       - backend
 

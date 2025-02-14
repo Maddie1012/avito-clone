@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import { TextField, Container, Button, Typography, Select, MenuItem, FormHelperText, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {Item} from "../types/types";
 
 interface FormStep2Props {
-  category: string;
-  step1Data: { name: string; description: string; location: string; image?: string };
+    category: string;
+    step1Data: { name: string; description: string; location: string; image?: string };
+    initialData?: Item;
+    onBack: () => void;
 }
 
-const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
-  const [area, setArea] = useState<string>('');
-  const [rooms, setRooms] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [model, setModel] = useState<string>('');
-  const [year, setYear] = useState<string>('');
-  const [mileage, setMileage] = useState<string>('');
-  const [experience, setExperience] = useState<string>('');
-  const [cost, setCost] = useState<string>('');
-  const [schedule, setSchedule] = useState<string>('');
+const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, initialData, onBack }) => {
+    const [area, setArea] = useState<string>(initialData?.area?.toString() || '');
+    const [price, setPrice] = useState<string>(initialData?.price?.toString() || '');
+    const [rooms, setRooms] = useState<string>(initialData?.rooms?.toString() || '');
+    const [selectedValue, setSelectedValue] = useState<string>(initialData?.propertyType || initialData?.brand || initialData?.serviceType || '');
+    const [model, setModel] = useState<string>(initialData?.model || '');
+    const [year, setYear] = useState<string>(initialData?.year?.toString() || '');
+    const [mileage, setMileage] = useState<string>(initialData?.mileage?.toString() || '');
+    const [experience, setExperience] = useState<string>(initialData?.experience?.toString() || '');
+    const [cost, setCost] = useState<string>(initialData?.cost?.toString() || '');
+    const [schedule, setSchedule] = useState<string>(initialData?.workSchedule || '');
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -25,6 +28,7 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
 
   const handleSubmit = async () => {
     const formErrors: { [key: string]: string } = {};
+
     if (category === 'Недвижимость') {
       if (!area) formErrors.area = 'Заполните поле';
       if (!rooms) formErrors.rooms = 'Заполните поле';
@@ -45,47 +49,47 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
     }
 
     const dataToSend = {
-      ...step1Data,
-      type: category,
-      ...(category === 'Недвижимость' && {
+        ...step1Data,
+        type: category,
+        ...(category === 'Недвижимость' && {
         propertyType: selectedValue,
         area: parseInt(area),
         rooms: parseInt(rooms),
         price: parseInt(price),
-      }),
-      ...(category === 'Авто' && {
+        }),
+        ...(category === 'Авто' && {
         brand: selectedValue,
         model,
         year: parseInt(year),
         mileage: parseInt(mileage),
-      }),
-      ...(category === 'Услуги' && {
+        }),
+        ...(category === 'Услуги' && {
         serviceType: selectedValue,
         experience: parseInt(experience),
         cost: parseInt(cost),
         workSchedule: schedule,
-      }),
+        }),
     };
 
     try {
-      const response = await fetch('http://localhost:3000/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Данные успешно отправлены:', result);
-        navigate('/list');
-      } else {
-        console.error('Ошибка при отправке данных:', response.statusText);
+        const response = await fetch(`http://localhost:3000/items/${initialData?.id}`, {
+          method: 'PUT', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToSend),
+        });
+    
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Данные успешно обновлены:', result);
+          navigate('/list');
+        } else {
+          console.error('Ошибка при обновлении данных:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Ошибка:', error);
       }
-    } catch (error) {
-      console.error('Ошибка:', error);
-    }
   };
 
   return (
@@ -242,9 +246,11 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data }) => {
           />
         </>
       )}
-
-      <Button variant="contained" onClick={handleSubmit} sx={{ ml: 'auto' }}>
+      <Button variant="contained" onClick={handleSubmit} sx={{ ml: 'auto', mr: 2 }}>
         Отправить
+      </Button>
+      <Button variant="outlined" onClick={onBack}>
+        Назад
       </Button>
     </Container>
   );
