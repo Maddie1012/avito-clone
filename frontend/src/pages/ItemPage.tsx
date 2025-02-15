@@ -159,16 +159,16 @@ export default function ItemPage() {
           )}
         </CardContent>
         <Button
-            size="small"
-            onClick={() => navigate('/form', { state: { item } })}
-            sx={{ margin: 2 }}
+          size="small"
+          onClick={() => navigate(`/form?edit=${id}`)}
+          sx={{ margin: 2 }}
         >
-            Редактировать
+          Редактировать
         </Button>
         <Button
-            size="small"
-            href="/list"
-            sx={{ margin: 2 }}
+          size="small"
+          href="/list"
+          sx={{ margin: 2 }}
         >
           Назад к списку
         </Button>
