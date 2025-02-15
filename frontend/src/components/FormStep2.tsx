@@ -5,20 +5,23 @@ import { useNavigate } from 'react-router-dom';
 interface FormStep2Props {
   category: string;
   step1Data: { name: string; description: string; location: string; image?: string };
+  step2Data: any; // Новый пропс для данных второго шага
   onBack: () => void;
 }
 
-const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, onBack }) => {
-  const [area, setArea] = useState<string>('');
-  const [rooms, setRooms] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [model, setModel] = useState<string>('');
-  const [year, setYear] = useState<string>('');
-  const [mileage, setMileage] = useState<string>('');
-  const [experience, setExperience] = useState<string>('');
-  const [cost, setCost] = useState<string>('');
-  const [schedule, setSchedule] = useState<string>('');
+const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, onBack }) => {
+  const [area, setArea] = useState<string>(step2Data.area || '');
+  const [rooms, setRooms] = useState<string>(step2Data.rooms || '');
+  const [price, setPrice] = useState<string>(step2Data.price || '');
+  const [selectedValue, setSelectedValue] = useState<string>(
+    step2Data.propertyType || step2Data.brand || step2Data.serviceType || '' // Инициализируем значением из step2Data
+  );
+  const [model, setModel] = useState<string>(step2Data.model || '');
+  const [year, setYear] = useState<string>(step2Data.year || '');
+  const [mileage, setMileage] = useState<string>(step2Data.mileage || '');
+  const [experience, setExperience] = useState<string>(step2Data.experience || '');
+  const [cost, setCost] = useState<string>(step2Data.cost || '');
+  const [schedule, setSchedule] = useState<string>(step2Data.workSchedule || '');
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
