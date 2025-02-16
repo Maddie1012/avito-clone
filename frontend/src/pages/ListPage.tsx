@@ -56,6 +56,7 @@ export default function ListPage() {
   const [experience, setExperience] = useState("");
   const [cost, setCost] = useState("");
 
+  // загрузка данных с сервера
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -77,6 +78,7 @@ export default function ListPage() {
     };
   }, []);
 
+  // фильтрация элементов на основе поиска, категории
   useEffect(() => {
     const filtered = items.filter((item) => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -121,14 +123,17 @@ export default function ListPage() {
     cost,
   ]);
 
+  // пагинация
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
+  // изменение страницы
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
+  // изменение выбранного типа
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     setSelectedType(event.target.value);
     setPropertyType("");
@@ -143,6 +148,7 @@ export default function ListPage() {
     setCost("");
   };
 
+  // уникальный тип в списке элементов
   const uniqueTypes = Array.from(new Set(items.map((item) => item.type)));
 
   return (

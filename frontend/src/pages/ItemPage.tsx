@@ -39,6 +39,7 @@ export default function ItemPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // загрузка объявления по id
   useEffect(() => {
     if (!id) return;
 
@@ -67,6 +68,7 @@ export default function ItemPage() {
     };
   }, [id]);
 
+  // индикатор загрузки
   if (loading) {
     return (
       <Container maxWidth="sm" sx={{ display: "flex", justifyContent: "center", marginTop: 5 }}>
