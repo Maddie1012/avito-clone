@@ -4,18 +4,18 @@ import { useNavigate } from 'react-router-dom';
 
 interface FormStep2Props {
   category: string;
-  step1Data: { name: string; description: string; location: string; image?: string };
-  step2Data: any; // Новый пропс для данных второго шага
+  step1Data: { name: string; description: string; location: string; image?: string, id?: string; };
+  step2Data: any; 
   onBack: () => void;
+  isEditMode: boolean;
 }
 
-const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, onBack }) => {
+const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, onBack, isEditMode }) => {
   const [area, setArea] = useState<string>(step2Data.area || '');
   const [rooms, setRooms] = useState<string>(step2Data.rooms || '');
   const [price, setPrice] = useState<string>(step2Data.price || '');
   const [selectedValue, setSelectedValue] = useState<string>(
-    step2Data.propertyType || step2Data.brand || step2Data.serviceType || '' // Инициализируем значением из step2Data
-  );
+    step2Data.propertyType || step2Data.brand || step2Data.serviceType || '');
   const [model, setModel] = useState<string>(step2Data.model || '');
   const [year, setYear] = useState<string>(step2Data.year || '');
   const [mileage, setMileage] = useState<string>(step2Data.mileage || '');
@@ -28,6 +28,14 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    console.log('step1Data перед отправкой:', step1Data); 
+    console.log('isEditMode:', isEditMode);
+
+    if (isEditMode && !step1Data.id) {
+      console.error('ID не найден для редактирования');
+      return;
+    }
+  
     const formErrors: { [key: string]: string } = {};
     if (category === 'Недвижимость') {
       if (!area) formErrors.area = 'Заполните поле';
@@ -42,12 +50,12 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
       if (!experience) formErrors.experience = 'Заполните поле';
       if (!cost) formErrors.cost = 'Заполните поле';
     }
-
+  
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
-
+  
     const dataToSend = {
       ...step1Data,
       type: category,
@@ -70,16 +78,21 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
         workSchedule: schedule,
       }),
     };
-
+  
     try {
-      const response = await fetch('http://localhost:3000/items', {
-        method: 'POST',
+      const url = isEditMode ? `http://localhost:3000/items/${step1Data.id}` : 'http://localhost:3000/items';
+      const method = isEditMode ? 'PUT' : 'POST';
+  
+      console.log('Отправка данных:', { url, method, data: dataToSend });
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(dataToSend),
       });
-
+  
       if (response.ok) {
         const result = await response.json();
         console.log('Данные успешно отправлены:', result);
@@ -248,7 +261,7 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
       )}
 
       <Button variant="contained" onClick={handleSubmit} sx={{ ml: 'auto' }}>
-        Отправить
+        {isEditMode ? 'Сохранить изменения' : 'Отправить'}
       </Button>
       <Button variant="outlined" onClick={onBack} sx={{ ml: 2 }}>
         Назад

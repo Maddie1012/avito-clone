@@ -19,6 +19,7 @@ interface Item {
   type: string;
   image?: string;
   propertyType?: string;
+  serviceType?: string;
   area?: number;
   rooms?: number;
   price?: number;
@@ -144,7 +145,7 @@ export default function ItemPage() {
           {item.type === "Услуги" && (
             <>
               <Typography variant="body2" color="text.secondary">
-                <strong>Тип услуги:</strong> {item.propertyType}
+                <strong>Тип услуги:</strong> {item.serviceType}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 <strong>Опыт работы:</strong> {item.experience} лет

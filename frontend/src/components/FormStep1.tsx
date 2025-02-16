@@ -3,11 +3,11 @@ import { TextField, Button, Container, Typography, Input, InputLabel, Select, Me
 
 interface FormStep1Props {
   onNext: (category: string, data: { name: string; description: string; location: string; image?: string }) => void;
-  initialData: { name: string; description: string; location: string; image?: string; category?: string }; // Добавляем category
+  initialData: { name: string; description: string; location: string; image?: string; category?: string };
 }
 
 const FormStep1: React.FC<FormStep1Props> = ({ onNext, initialData }) => {
-  const [selectedValue, setSelectedValue] = useState<string>(initialData.category || ''); // Инициализируем значением из initialData
+  const [selectedValue, setSelectedValue] = useState<string>(initialData.category || '');
   const [name, setName] = useState<string>(initialData.name || '');
   const [description, setDescription] = useState<string>(initialData.description || '');
   const [location, setLocation] = useState<string>(initialData.location || '');
@@ -74,7 +74,7 @@ const FormStep1: React.FC<FormStep1Props> = ({ onNext, initialData }) => {
       />
       <InputLabel>Выберите категорию</InputLabel>
       <Select
-        value={selectedValue} // Используем selectedValue
+        value={selectedValue}
         onChange={handleChange}
         fullWidth
         sx={{ marginBottom: '20px' }}
