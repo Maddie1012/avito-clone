@@ -2,10 +2,25 @@ import React, { useState } from 'react';
 import { TextField, Container, Button, Typography, Select, MenuItem, FormHelperText, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
+interface Step2Data {
+  propertyType?: string;
+  area?: string;
+  rooms?: string;
+  price?: string;
+  brand?: string;
+  model?: string;
+  year?: string;
+  mileage?: string;
+  serviceType?: string;
+  experience?: string;
+  cost?: string;
+  workSchedule?: string;
+}
+
 interface FormStep2Props {
   category: string;
   step1Data: { name: string; description: string; location: string; image?: string, id?: string; };
-  step2Data: any; 
+  step2Data: Step2Data; 
   onBack: () => void;
   isEditMode: boolean;
 }
@@ -69,13 +84,13 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
         brand: selectedValue,
         model,
         year: parseInt(year),
-        mileage: parseInt(mileage),
+        ...(mileage !== '' && { mileage: parseInt(mileage) }),
       }),
       ...(category === 'Услуги' && {
         serviceType: selectedValue,
         experience: parseInt(experience),
         cost: parseInt(cost),
-        workSchedule: schedule,
+        ...(schedule !== '' && { workSchedule: schedule }), 
       }),
     };
   

@@ -4,6 +4,22 @@ import FormStep2 from '../components/FormStep2';
 import { Container, Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
+interface Step2Data {
+  propertyType?: string;
+  area?: string;
+  rooms?: string;
+  price?: string;
+  brand?: string;
+  model?: string;
+  year?: string;
+  mileage?: string;
+  serviceType?: string;
+  experience?: string;
+  cost?: string;
+  workSchedule?: string;
+}
+
+
 const FormPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [category, setCategory] = useState<string>('');
@@ -21,7 +37,8 @@ const FormPage: React.FC = () => {
     image: undefined,
     category: '',
   });
-  const [step2Data, setStep2Data] = useState<any>({});
+  
+  const [step2Data, setStep2Data] = useState<Step2Data>({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
