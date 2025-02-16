@@ -16,7 +16,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { Link } from 'react-router-dom';
-import placeholderImage from "../assets/Placeholder-1.png"
+import placeholderImage from "../assets/Placeholder-1.png";
 
 interface Item {
   id: number;
@@ -25,37 +25,101 @@ interface Item {
   location: string;
   type: string;
   image?: string;
+  propertyType?: string;
+  area?: number;
+  rooms?: number;
+  price?: number;
+  brand?: string;
+  model?: string;
+  year?: number;
+  serviceType?: string;
+  experience?: number;
+  cost?: number;
 }
 
 export default function ListPage() {
-  const [items, setItems] = useState<Item[]>([]); 
-  const [filteredItems, setFilteredItems] = useState<Item[]>([]); 
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [selectedType, setSelectedType] = useState(""); 
-  const [currentPage, setCurrentPage] = useState(1); 
-  const itemsPerPage = 5; 
+  const [items, setItems] = useState<Item[]>([]);
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
+  const [propertyType, setPropertyType] = useState("");
+  const [area, setArea] = useState("");
+  const [rooms, setRooms] = useState("");
+  const [price, setPrice] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [experience, setExperience] = useState("");
+  const [cost, setCost] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/items")
+    const abortController = new AbortController();
+
+    fetch("http://localhost:3000/items", { signal: abortController.signal })
       .then((response) => response.json())
       .then((data) => {
         console.log("Полученные данные:", data);
         setItems(data);
-        setFilteredItems(data); 
+        setFilteredItems(data);
       })
-      .catch((error) => console.log("Ошибка:", error));
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.log("Ошибка:", error);
+        }
+      });
+
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   useEffect(() => {
     const filtered = items.filter((item) => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType ? item.type === selectedType : true;
-      return matchesSearch && matchesType;
+
+      let matchesAdditionalFilters = true;
+      if (selectedType === "Недвижимость") {
+        matchesAdditionalFilters =
+          (!propertyType || item.propertyType === propertyType) &&
+          (!area || item.area === parseInt(area)) &&
+          (!rooms || item.rooms === parseInt(rooms)) &&
+          (!price || item.price === parseInt(price));
+      } else if (selectedType === "Авто") {
+        matchesAdditionalFilters =
+          (!brand || item.brand === brand) &&
+          (!model || item.model === model) &&
+          (!year || item.year === parseInt(year));
+      } else if (selectedType === "Услуги") {
+        matchesAdditionalFilters =
+          (!serviceType || item.serviceType === serviceType) &&
+          (!experience || item.experience === parseInt(experience)) &&
+          (!cost || item.cost === parseInt(cost));
+      }
+
+      return matchesSearch && matchesType && matchesAdditionalFilters;
     });
     setFilteredItems(filtered);
-    setCurrentPage(1); 
-  }, [searchQuery, selectedType, items]);
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    selectedType,
+    items,
+    propertyType,
+    area,
+    rooms,
+    price,
+    brand,
+    model,
+    year,
+    serviceType,
+    experience,
+    cost,
+  ]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -67,6 +131,16 @@ export default function ListPage() {
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     setSelectedType(event.target.value);
+    setPropertyType("");
+    setArea("");
+    setRooms("");
+    setPrice("");
+    setBrand("");
+    setModel("");
+    setYear("");
+    setServiceType("");
+    setExperience("");
+    setCost("");
   };
 
   const uniqueTypes = Array.from(new Set(items.map((item) => item.type)));
@@ -111,6 +185,101 @@ export default function ListPage() {
           ))}
         </Select>
       </FormControl>
+
+      {selectedType === "Недвижимость" && (
+        <>
+          <TextField
+            label="Тип недвижимости"
+            variant="outlined"
+            fullWidth
+            value={propertyType}
+            onChange={(e) => setPropertyType(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Площадь"
+            variant="outlined"
+            fullWidth
+            value={area}
+            onChange={(e) => setArea(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Количество комнат"
+            variant="outlined"
+            fullWidth
+            value={rooms}
+            onChange={(e) => setRooms(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Цена"
+            variant="outlined"
+            fullWidth
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+        </>
+      )}
+
+      {selectedType === "Авто" && (
+        <>
+          <TextField
+            label="Марка"
+            variant="outlined"
+            fullWidth
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Модель"
+            variant="outlined"
+            fullWidth
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Год выпуска"
+            variant="outlined"
+            fullWidth
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+        </>
+      )}
+
+      {selectedType === "Услуги" && (
+        <>
+          <TextField
+            label="Тип услуги"
+            variant="outlined"
+            fullWidth
+            value={serviceType}
+            onChange={(e) => setServiceType(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Опыт"
+            variant="outlined"
+            fullWidth
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Стоимость"
+            variant="outlined"
+            fullWidth
+            value={cost}
+            onChange={(e) => setCost(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+        </>
+      )}
 
       <Grid container spacing={3}>
         {currentItems.map((item) => (

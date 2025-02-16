@@ -71,6 +71,8 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
       return;
     }
   
+    console.log('category:', category);
+console.log('mileage:', mileage);
     const dataToSend = {
       ...step1Data,
       type: category,
@@ -82,9 +84,9 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
       }),
       ...(category === 'Авто' && {
         brand: selectedValue,
-        model,
+        model: model,
         year: parseInt(year),
-        ...(mileage !== '' && { mileage: parseInt(mileage) }),
+        mileage: mileage !== '' ? parseInt(mileage) : 0,
       }),
       ...(category === 'Услуги' && {
         serviceType: selectedValue,
@@ -93,7 +95,9 @@ const FormStep2: React.FC<FormStep2Props> = ({ category, step1Data, step2Data, o
         ...(schedule !== '' && { workSchedule: schedule }), 
       }),
     };
-  
+    console.log('dataToSend:', dataToSend);
+
+
     try {
       const url = isEditMode ? `http://localhost:3000/items/${step1Data.id}` : 'http://localhost:3000/items';
       const method = isEditMode ? 'PUT' : 'POST';

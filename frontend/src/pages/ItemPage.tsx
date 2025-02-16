@@ -42,7 +42,9 @@ export default function ItemPage() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:3000/items/${id}`)
+    const abortController = new AbortController();
+
+    fetch(`http://localhost:3000/items/${id}`, { signal: abortController.signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Объявление не найдено");
@@ -54,9 +56,15 @@ export default function ItemPage() {
         setLoading(false);
       })
       .catch((error) => {
-        setError(error.message);
-        setLoading(false);
+        if (error.name !== 'AbortError') {
+          setError(error.message);
+          setLoading(false);
+        }
       });
+
+    return () => {
+      abortController.abort();
+    };
   }, [id]);
 
   if (loading) {

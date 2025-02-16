@@ -19,7 +19,6 @@ interface Step2Data {
   workSchedule?: string;
 }
 
-
 const FormPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [category, setCategory] = useState<string>('');
@@ -37,20 +36,21 @@ const FormPage: React.FC = () => {
     image: undefined,
     category: '',
   });
-  
+
   const [step2Data, setStep2Data] = useState<Step2Data>({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
+    const abortController = new AbortController();
     const searchParams = new URLSearchParams(location.search);
     const editId = searchParams.get('edit');
   
     if (editId) {
       setIsEditMode(true);
       setLoading(true);
-      fetch(`http://localhost:3000/items/${editId}`)
+      fetch(`http://localhost:3000/items/${editId}`, { signal: abortController.signal })
         .then((response) => response.json())
         .then((data) => {
           console.log('Данные, полученные от API:', data); 
@@ -98,10 +98,16 @@ const FormPage: React.FC = () => {
           setLoading(false);
         })
         .catch((error) => {
-          console.error('Ошибка при загрузке данных:', error);
-          setLoading(false);
+          if (error.name !== 'AbortError') {
+            console.error('Ошибка при загрузке данных:', error);
+            setLoading(false);
+          }
         });
     }
+
+    return () => {
+      abortController.abort();
+    };
   }, [location.search]);
 
   const handleNext = (selectedCategory: string, data: { name: string; description: string; location: string; image?: string }) => {
